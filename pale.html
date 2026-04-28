@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Gym App - Slim & Edit</title>
+    <title>My Gym App - Slim 3 Days</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
             --group-bg-1: #151515;
-            --group-bg-2: #1e1e1e; /* Simula l'alternanza giallo/bianco */
+            --group-bg-2: #1e1e1e;
             --primary: #00e676;
             --text-main: #f0f0f0;
             --text-muted: #888888;
@@ -27,12 +27,12 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             padding-bottom: 100px;
-            font-size: 14px; /* Font più piccolo per design slim */
+            font-size: 14px;
         }
 
         header {
             background-color: var(--group-bg-1);
-            padding: 10px 15px;
+            padding: 10px 10px;
             text-align: center;
             position: sticky;
             top: 0;
@@ -50,15 +50,16 @@
             display: flex;
             justify-content: center;
             gap: 5px;
+            flex-wrap: wrap; /* Permette ai bottoni di andare a capo se lo schermo è strettissimo */
         }
 
         .tab-btn {
             background: transparent;
             color: var(--text-muted);
             border: 1px solid var(--border-color);
-            padding: 6px 15px;
+            padding: 6px 12px;
             border-radius: 15px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -81,7 +82,6 @@
 
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Stile dei Gruppi (Superserie/Triserie) */
         .exercise-group {
             border-radius: 8px;
             margin-bottom: 12px;
@@ -90,7 +90,6 @@
             border-left: 4px solid var(--text-muted);
         }
 
-        /* Alternanza colori per i gruppi */
         .exercise-group:nth-child(odd) { background-color: var(--group-bg-1); }
         .exercise-group:nth-child(even) { background-color: var(--group-bg-2); }
 
@@ -116,7 +115,6 @@
         .exercise-item.done { opacity: 0.4; }
         .exercise-item.done .ex-name { text-decoration: line-through; }
 
-        /* Custom Checkbox Piccola */
         .checkbox-wrapper { margin-right: 10px; }
         .checkbox-wrapper input { display: none; }
         .checkbox-wrapper label {
@@ -145,12 +143,6 @@
             gap: 4px;
         }
 
-        .ex-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
         .ex-name {
             font-weight: 600;
             font-size: 1rem;
@@ -159,17 +151,21 @@
 
         .ex-stats {
             display: flex;
-            gap: 8px;
-            font-size: 0.85rem;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .ex-stats > span {
+            color: var(--text-muted);
         }
 
-        /* Stile campi modificabili */
         [contenteditable="true"] {
             border-bottom: 1px dashed var(--text-muted);
             outline: none;
             min-width: 15px;
             display: inline-block;
             transition: all 0.2s;
+            color: var(--text-main);
         }
 
         [contenteditable="true"]:focus {
@@ -179,12 +175,12 @@
             border-radius: 2px;
         }
 
-        /* Timer in basso ridotto */
+        /* Timer Settings */
         .timer-container {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
             background-color: var(--group-bg-1);
-            padding: 10px;
+            padding: 8px 10px;
             border-top: 1px solid var(--border-color);
             display: flex;
             align-items: center;
@@ -193,10 +189,10 @@
         }
 
         .timer-display {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
             font-variant-numeric: tabular-nums;
-            width: 80px;
+            width: 70px;
             text-align: center;
         }
 
@@ -205,20 +201,21 @@
 
         .timer-controls {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-grow: 1;
             justify-content: flex-end;
         }
 
         .timer-btn {
-            padding: 8px 12px;
+            padding: 8px 8px;
             border: none;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             background-color: #333;
             color: white;
+            min-width: 40px;
         }
         .timer-btn.preset { background-color: #2c3e50; }
         .timer-btn.stop { background-color: var(--danger); }
@@ -232,18 +229,21 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('day1')">DAY 1</button>
             <button class="tab-btn" onclick="switchTab('day2')">DAY 2</button>
-            <button class="tab-btn" onclick="resetData()" style="border-color: #ff5252; color: #ff5252;">Reset Dati</button>
+            <button class="tab-btn" onclick="switchTab('day3')">DAY 3</button>
+            <button class="tab-btn" onclick="resetData()" style="border-color: #ff5252; color: #ff5252;">Reset</button>
         </div>
     </header>
 
     <div class="container">
         <div id="day1" class="day-content active"></div>
         <div id="day2" class="day-content"></div>
+        <div id="day3" class="day-content"></div>
     </div>
 
     <div class="timer-container">
         <div class="timer-display" id="timeDisplay">00:00</div>
         <div class="timer-controls">
+            <button class="timer-btn preset" onclick="startTimer(20)">20s</button>
             <button class="timer-btn preset" onclick="startTimer(30)">30s</button>
             <button class="timer-btn preset" onclick="startTimer(60)">60s</button>
             <button class="timer-btn preset" onclick="startTimer(90)">90s</button>
@@ -254,98 +254,119 @@
     <audio id="beepSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        // Struttura dati raggruppata per serie (Multiserie/Triserie) basata sui blocchi di colore
+        // Struttura Dati
         const defaultData = {
             day1: [
-                [{ id: "d1_0", name: "Corsa", reps: "5 Min", weight: "-" }],
+                [{ id: "d1_0", name: "Corsa", reps: "5 Min", weight: "-", rest: "0 SEC" }],
                 [
-                    { id: "d1_1", name: "Plank Piedi Pallone 30SEC", reps: "30 SEC", weight: "-" },
-                    { id: "d1_2", name: "Plank Laterale", reps: "20", weight: "-" }
+                    { id: "d1_1", name: "Crunk Pallone 30SEC", reps: "12", weight: "-", rest: "-" },
+                    { id: "d1_2", name: "Plank Laterale", reps: "12", weight: "-", rest: "30 SEC" }
                 ],
                 [
-                    { id: "d1_3", name: "Polpacci 30SEC", reps: "30", weight: "16" },
-                    { id: "d1_4", name: "Lento Avanti", reps: "12", weight: "16" },
-                    { id: "d1_5", name: "Crunch Gambe Su", reps: "20", weight: "-" }
+                    { id: "d1_3", name: "Panca Piana", reps: "10", weight: "50", rest: "-" },
+                    { id: "d1_4", name: "Crunch Panca", reps: "20", weight: "-", rest: "-" },
+                    { id: "d1_5", name: "Sumo Squat", reps: "15", weight: "20", rest: "0 SEC" }
+                ],
+                [{ id: "d1_6", name: "Corsa", reps: "3 MIN", weight: "-", rest: "0 SEC" }],
+                [
+                    { id: "d1_7", name: "Squat 30SEC", reps: "12", weight: "55", rest: "-" },
+                    { id: "d1_8", name: "Lento Avanti", reps: "12", weight: "10", rest: "-" },
+                    { id: "d1_9", name: "Bicipiti", reps: "8", weight: "8", rest: "30 SEC" }
                 ],
                 [
-                    { id: "d1_6", name: "Squat 30SEC", reps: "12", weight: "55" },
-                    { id: "d1_7", name: "Bicipiti", reps: "10", weight: "10" },
-                    { id: "d1_8", name: "Croci Busto Flesso", reps: "12", weight: "8" }
+                    { id: "d1_10", name: "Trazioni Strette", reps: "8", weight: "-", rest: "-" },
+                    { id: "d1_11", name: "Trici Busto Flesso", reps: "12", weight: "6", rest: "-" },
+                    { id: "d1_12", name: "Affondi Avati", reps: "20", weight: "10", rest: "0 SEC" }
                 ],
                 [
-                    { id: "d1_9", name: "Trazioni Strette", reps: "8", weight: "-" },
-                    { id: "d1_10", name: "Trici Busto Flesso", reps: "12", weight: "6" },
-                    { id: "d1_11", name: "Affondi Avanti", reps: "8", weight: "10" }
-                ],
-                [
-                    { id: "d1_12", name: "Panca Piana", reps: "10", weight: "50" },
-                    { id: "d1_13", name: "Crunch Panca", reps: "20", weight: "-" },
-                    { id: "d1_14", name: "Sumo Squat", reps: "30SEC", weight: "24" }
-                ],
-                [
-                    { id: "d1_15", name: "Stretc Gamba Flessa", reps: "30 SEC", weight: "-" },
-                    { id: "d1_16", name: "Lombare Supino", reps: "30 SEC", weight: "-" },
-                    { id: "d1_17", name: "Quadricipiti", reps: "30 SEC", weight: "-" }
+                    { id: "d1_13", name: "Stretc Gamba Flessa", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d1_14", name: "Lombare Supino", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d1_15", name: "Quadtrcipiti", reps: "30 SEC", weight: "-", rest: "0 SEC" }
                 ]
             ],
             day2: [
-                [{ id: "d2_0", name: "Corsa", reps: "5 Min", weight: "-" }],
+                [{ id: "d2_0", name: "Corsa", reps: "5 Min", weight: "-", rest: "0 SEC" }],
                 [
-                    { id: "d2_1", name: "Plank Braccia Pallone 30SEC", reps: "30 SEC", weight: "-" },
-                    { id: "d2_2", name: "Plank Laterale", reps: "20", weight: "-" }
+                    { id: "d2_1", name: "Plank Pallone Braccia 30SEC", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d2_2", name: "Plank Pallone Laterale", reps: "40 SEC", weight: "-", rest: "30 SEC" }
                 ],
                 [
-                    { id: "d2_3", name: "Bulgaro Su Panca", reps: "10", weight: "10" },
-                    { id: "d2_4", name: "Alzate Laterali Seduto", reps: "12", weight: "10" },
-                    { id: "d2_5", name: "Chrunch Tocca Tacco", reps: "15", weight: "-" }
+                    { id: "d2_3", name: "Bulgaro Panca", reps: "20", weight: "-", rest: "-" },
+                    { id: "d2_4", name: "Alzate Laterali Seduto", reps: "12", weight: "-", rest: "-" },
+                    { id: "d2_5", name: "Crunh Braccia Piedi", reps: "20", weight: "-", rest: "0 SEC" }
+                ],
+                [{ id: "d2_6", name: "Corsa", reps: "3 MIN", weight: "-", rest: "0 SEC" }],
+                [
+                    { id: "d2_7", name: "Trazioni Large", reps: "10", weight: "-", rest: "-" },
+                    { id: "d2_8", name: "Swing", reps: "15", weight: "-", rest: "-" },
+                    { id: "d2_9", name: "Strechin Piedi", reps: "30 SEC", weight: "-", rest: "0 SEC" }
                 ],
                 [
-                    { id: "d2_6", name: "Rematore Triangolo", reps: "10", weight: "50" },
-                    { id: "d2_7", name: "Affondo Laterale", reps: "10", weight: "10" },
-                    { id: "d2_8", name: "Trazione Larga", reps: "10", weight: "25" }
+                    { id: "d2_10", name: "Petto Inclinato 30 90 SEC", reps: "10", weight: "-", rest: "-" },
+                    { id: "d2_11", name: "Croci Inverse 30", reps: "12", weight: "-", rest: "90 SEC" }
+                ],
+                [{ id: "d2_12", name: "Corsa", reps: "3 MIN", weight: "-", rest: "0 SEC" }],
+                [
+                    { id: "d2_13", name: "Strech Gamba Flessa", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d2_14", name: "Lombare Supino", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d2_15", name: "Quadtrcipiti", reps: "30 SEC", weight: "-", rest: "0 SEC" }
+                ]
+            ],
+            day3: [
+                [{ id: "d3_0", name: "Corsa", reps: "5 Min", weight: "-", rest: "0 SEC" }],
+                [
+                    { id: "d3_1", name: "Plank Piedi Pallone 30SEC", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d3_2", name: "Crunch Supino Pallone", reps: "12", weight: "-", rest: "30 SEC" }
                 ],
                 [
-                    { id: "d2_9", name: "Swing", reps: "15", weight: "20" },
-                    { id: "d2_10", name: "Strech In Piedi", reps: "30 SEC", weight: "-" }
+                    { id: "d3_3", name: "Bulgaro Su Panca", reps: "20", weight: "-", rest: "-" },
+                    { id: "d3_4", name: "Alzate Laterali Seduto", reps: "12", weight: "-", rest: "-" },
+                    { id: "d3_5", name: "Chrunch Tocca Tacco", reps: "15", weight: "-", rest: "0 SEC" }
+                ],
+                [{ id: "d3_6", name: "Corsa", reps: "3 MIN", weight: "-", rest: "0 SEC" }],
+                [
+                    { id: "d3_7", name: "Rematore Triangolo", reps: "10", weight: "-", rest: "-" },
+                    { id: "d3_8", name: "Mountain Climber", reps: "30 SEC", weight: "-", rest: "0 SEC" }
                 ],
                 [
-                    { id: "d2_11", name: "Distensioni Petto Inclinato 90 SEC", reps: "10", weight: "20" },
-                    { id: "d2_12", name: "Croci Petto Inclinato", reps: "12", weight: "10" }
+                    { id: "d3_9", name: "Bicipiti Seduto", reps: "10", weight: "-", rest: "-" },
+                    { id: "d3_10", name: "Bicipiti In Piedi", reps: "8", weight: "-", rest: "90 SEC" }
                 ],
                 [
-                    { id: "d2_13", name: "Bicipiti 30 SEC", reps: "10", weight: "10" },
-                    { id: "d2_14", name: "Tricipiti Manubrio Dietro", reps: "10", weight: "18" },
-                    { id: "d2_15", name: "Pedalata", reps: "20", weight: "-" }
+                    { id: "d3_11", name: "Tricipiti Barra 30 SEC", reps: "10", weight: "-", rest: "-" },
+                    { id: "d3_12", name: "Tricipiti Dietro Nuca", reps: "10", weight: "-", rest: "30 SEC" }
                 ],
                 [
-                    { id: "d2_16", name: "Stretc Gamba Flessa", reps: "30 SEC", weight: "-" },
-                    { id: "d2_17", name: "Lombare Supino", reps: "30 SEC", weight: "-" },
-                    { id: "d2_18", name: "Quadricipiti", reps: "30 SEC", weight: "-" }
+                    { id: "d3_13", name: "Stretc Gamba Flessa", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d3_14", name: "Lombare Supino", reps: "30 SEC", weight: "-", rest: "-" },
+                    { id: "d3_15", name: "Quadtrcipiti", reps: "30 SEC", weight: "-", rest: "0 SEC" }
                 ]
             ]
         };
 
-        // Carica dati da LocalStorage o usa i default
-        let appData = JSON.parse(localStorage.getItem('gymData')) || defaultData;
+        // Carica dati. Se è una vecchia versione senza day3, fa un reset automatico.
+        let appData = JSON.parse(localStorage.getItem('gymData'));
+        if (!appData || !appData.day3) {
+            appData = defaultData;
+            localStorage.setItem('gymData', JSON.stringify(appData));
+        }
 
         function saveDati() {
             localStorage.setItem('gymData', JSON.stringify(appData));
         }
 
         function resetData() {
-            if(confirm("Vuoi ripristinare i nomi e i pesi originali?")) {
+            if(confirm("Vuoi ripristinare la scheda ai valori originali (3 giorni)?")) {
                 localStorage.removeItem('gymData');
                 location.reload();
             }
         }
 
-        // Funzione per aggiornare l'array quando si modifica un testo
         function updateField(dayId, groupIndex, exIndex, field, element) {
             appData[dayId][groupIndex][exIndex][field] = element.innerText;
             saveDati();
         }
 
-        // Render dell'HTML
         function renderDay(dayId, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
@@ -353,13 +374,15 @@
             appData[dayId].forEach((group, gIndex) => {
                 let groupHtml = `<div class="exercise-group">`;
                 
-                // Etichetta del gruppo se > 1 esercizio
                 if(group.length > 1) {
                     const groupType = group.length === 2 ? 'Superserie' : (group.length === 3 ? 'Triserie' : 'Circuito');
                     groupHtml += `<div class="group-header">${groupType}</div>`;
                 }
 
                 group.forEach((ex, eIndex) => {
+                    // Protezione nel caso il salvataggio vecchio non avesse il campo rest
+                    const restVal = ex.rest || "-"; 
+
                     groupHtml += `
                         <div class="exercise-item" id="item-${ex.id}">
                             <div class="checkbox-wrapper">
@@ -371,6 +394,7 @@
                                 <div class="ex-stats">
                                     <span>Rip: <span contenteditable="true" onblur="updateField('${dayId}', ${gIndex}, ${eIndex}, 'reps', this)">${ex.reps}</span></span>
                                     <span>Kg: <span contenteditable="true" onblur="updateField('${dayId}', ${gIndex}, ${eIndex}, 'weight', this)">${ex.weight}</span></span>
+                                    <span>Rec: <span contenteditable="true" onblur="updateField('${dayId}', ${gIndex}, ${eIndex}, 'rest', this)">${restVal}</span></span>
                                 </div>
                             </div>
                         </div>
@@ -384,8 +408,8 @@
 
         renderDay('day1', 'day1');
         renderDay('day2', 'day2');
+        renderDay('day3', 'day3');
 
-        // Gestione Tab
         function switchTab(tabId) {
             document.querySelectorAll('.day-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -394,7 +418,6 @@
             event.target.classList.add('active');
         }
 
-        // Segno di spunta
         function toggleDone(itemId) {
             document.getElementById(itemId).classList.toggle('done');
         }
@@ -425,7 +448,7 @@
                     clearInterval(timerInterval);
                     display.classList.add('finished');
                     display.innerText = "FINE";
-                    beepSound.play().catch(e => console.log("Audio bloccato dal browser"));
+                    beepSound.play().catch(e => console.log("Audio bloccato"));
                 }
             }, 1000);
         }
